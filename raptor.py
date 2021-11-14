@@ -1,15 +1,5 @@
+# First you have to install pytube lib using pip or pipwin eg:- pip install pytube.
 from pytube import YouTube, Playlist, Channel
-import sys
-import subprocess
-import pkg_resources
-
-required = {'pytube'}
-installed = {pkg.key for pkg in pkg_resources.working_set}
-missing = required - installed
-
-if missing:
-    python = sys.executable
-    subprocess.check_call([python, '-m', 'pip', 'install', *missing], stdout=subprocess.DEVNULL)
 
 # Resolution function for video downloading.
 def resolution():
@@ -102,13 +92,10 @@ match options:
 
 		print(f'\n[+] Downloading "{link.title}" .. ')
 
-		link.streams.filter(only_audio = True).first().download(path)
+		link.streams.filter(only_audio = True, file_extension = 'mp4').first().download(path)
 		
 		print(f'\n[+]Downloaded')
 
 	case default:
 
 		print('Error occured. Try again!')
-
-
-
