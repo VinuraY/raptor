@@ -9,4 +9,4 @@ If you are using Windows, you can download raptor.exe and click it. It automatic
 If any error occured send me a message.
 
 https://t.me/AnonyMSAV
-vinura.y <-- Instergram 
+vinura.y <-- Instagram 
