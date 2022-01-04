@@ -1,10 +1,11 @@
 # First you have to install pytube lib using pip or pipwin eg:- pip install pytube.
-from pytube import YouTube, Playlist
+from pytube import YouTube, Playlist, Channel
 import platform
 import os
 from termcolor import colored
 
 system = platform.platform()
+
 
 if('Linux' in system):
 
@@ -15,16 +16,19 @@ elif('Windows' in system):
 
 # Resolution function for video downloading.
 
+home_dir = os.path.expanduser('~')
+
 
 def resolution():
-    res = input('Resolution of the video (360p,720p..) : ')
+    res = input(colored('Resolution of the video (360p,720p..) : ',
+                'red', attrs=['bold']))
     return res
 
 # Path to download file.
 
 
 def location():
-    path = input('Path : ')
+    path = f'{home_dir}\\Downloads'
     return path
 
 
@@ -47,31 +51,33 @@ print(colored('''
 		2. To download playlist.
 		3. To download all videos in channel.
 		4. To download audio from video.
-		''', 'red', attrs=['bold']))
+		''', 'yellow', attrs=['bold']))
 
-options = int(input(colored('Enter : ', 'blue', attrs=['bold'])))
+options = int(input(colored('Enter : ', 'red', attrs=['bold'])))
 
 
 match options:
 
     case 1:
 
-        url = input('\nURL of the video : ')
+        url = input(colored('\nURL of the video : ', 'red', attrs=['bold']))
         resolution = resolution()
         link = YouTube(url)
         path = location()
 
-        print(f'\n[+]Downloading "{link.title}" .. ')
+        print(
+            colored(f'\n[+]Downloading "{link.title}" .. ', 'yellow', attrs=['bold']))
 
         # Set resolution and download.
         link.streams.filter(
             res=resolution, file_extension='mp4').first().download(path)
 
-        print(f'\n[+]Downloaded')
+        print(colored(
+            f'\n[+]Downloaded and stored in the Downloads folder', 'yellow', attrs=['bold']))
 
     case 2:
 
-        url = input('\nURL of a playlist : ')
+        url = input(colored('\nURL of a playlist : ', 'red', attrs=['bold']))
         resolution = resolution()
         link = Playlist(url)
         path = location()
@@ -80,44 +86,50 @@ match options:
 
         for i in link.videos:
 
-            print(f'\n[+] Downloading "{i.title}" .. ')
+            print(
+                colored(f'\n[+]Downloading "{i.title}" .. ', 'yellow', attrs=['bold']))
 
             # Set resolution and download.
             i.streams.filter(
                 res=resolution, file_extension='mp4').first().download(path)
-            print(f'\n[+]Downloaded')
+            print(colored(
+                f'\n[+]Downloaded and stored in the Downloads folder', 'yellow', attrs=['bold']))
 
     case 3:
 
-        url = input('\nURL of a channel : ')
+        url = input(colored('\nURL of a channel : ', 'red', attrs=['bold']))
         resolution = resolution()
         path = location()
-        link = YouTube(url)
+        link = Channel(url)
 
         # Get videos in channel one by one and download them using for loop.
 
         for i in link.videos:
-            print(f'\n[+] Downloading "{i.title}" .. ')
+            print(
+                colored(f'\n[+]Downloading "{i.title}" .. ', 'yellow', attrs=['bold']))
 
             # Set resolution and download.
             i.streams.filter(
                 res=resolution, file_extension='mp4').first().download(path)
 
-            print(f'\n[+]Downloaded')
+            print(colored(
+                f'\n[+]Downloaded and stored in the Downloads folder', 'yellow', attrs=['bold']))
 
     case 4:
 
-        url = input('\nURL of a video : ')
+        url = input(colored('\nURL of a video : ', 'red', attrs=['bold']))
         link = YouTube(url)
         path = location()
 
-        print(f'\n[+] Downloading "{link.title}" .. ')
+        print(
+            colored(f'\n[+]Downloading "{link.title}" .. ', 'yellow', attrs=['bold']))
 
         link.streams.filter(
             only_audio=True, file_extension='mp4').first().download(path)
 
-        print(f'\n[+]Downloaded')
+        print(colored(
+            f'\n[+]Downloaded and stored in the Downloads folder', 'yellow', attrs=['bold']))
 
     case default:
 
-        print('Error occured. Try again!')
+        print(colored('Error occured. Try again!', 'red', attrs=['bold']))
