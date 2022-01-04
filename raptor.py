@@ -1,17 +1,34 @@
 # First you have to install pytube lib using pip or pipwin eg:- pip install pytube.
-from pytube import YouTube, Playlist, Channel
+from pytube import YouTube, Playlist
+import platform
+import os
+from termcolor import colored
+
+system = platform.platform()
+
+if('Linux' in system):
+
+    os.system('clear')
+
+elif('Windows' in system):
+    os.system('cls')
 
 # Resolution function for video downloading.
+
+
 def resolution():
-	res = input('Resolution of the video (360p,720p..) : ')
-	return res
+    res = input('Resolution of the video (360p,720p..) : ')
+    return res
 
 # Path to download file.
-def location():
-	path = input('Path : ')
-	return path
 
-print('''
+
+def location():
+    path = input('Path : ')
+    return path
+
+
+print(colored('''
 
 	██████╗  █████╗ ██████╗ ████████╗ ██████╗ ██████╗ 
 	██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
@@ -21,81 +38,86 @@ print('''
 	╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝
 
 	created by : Vinura Yashohara (AnonyMSAV)
-	''')
+	''', 'blue', attrs=['bold']))
 
 # Options of the program.
-print('''
+print(colored('''
 	Options : 
 		1. To download individual video.
 		2. To download playlist.
 		3. To download all videos in channel.
 		4. To download audio from video.
-		''')
+		''', 'red', attrs=['bold']))
 
-options = int(input('Enter : '))
+options = int(input(colored('Enter : ', 'blue', attrs=['bold'])))
+
 
 match options:
-	
-	case 1:
 
-		url = input('\nURL of the video : ')
-		resolution = resolution()
-		link = YouTube(url)
-		path = location()
-		
-		print(f'\n[+]Downloading "{link.title}" .. ')
+    case 1:
 
-		# Set resolution and download.
-		link.streams.filter(res = resolution, file_extension = 'mp4').first().download(path)
-		
-		print(f'\n[+]Downloaded')
+        url = input('\nURL of the video : ')
+        resolution = resolution()
+        link = YouTube(url)
+        path = location()
 
-	case 2:
+        print(f'\n[+]Downloading "{link.title}" .. ')
 
-		url = input('\nURL of a playlist : ')
-		resolution = resolution()
-		link = Playlist(url)
-		path = location()
+        # Set resolution and download.
+        link.streams.filter(
+            res=resolution, file_extension='mp4').first().download(path)
 
+        print(f'\n[+]Downloaded')
 
-		# Get videos in playlist one by one and download them using for loop.
+    case 2:
 
-		for i in link.videos:
+        url = input('\nURL of a playlist : ')
+        resolution = resolution()
+        link = Playlist(url)
+        path = location()
 
-			print(f'\n[+] Downloading "{i.title}" .. ')
+        # Get videos in playlist one by one and download them using for loop.
 
-			# Set resolution and download.
-			i.streams.filter(res = resolution, file_extension = 'mp4').first().download(path)			
-			print(f'\n[+]Downloaded')
+        for i in link.videos:
 
-	case 3:
+            print(f'\n[+] Downloading "{i.title}" .. ')
 
-		url = input('\nURL of a channel : ')
-		resolution = resolution()
-		path = location()
+            # Set resolution and download.
+            i.streams.filter(
+                res=resolution, file_extension='mp4').first().download(path)
+            print(f'\n[+]Downloaded')
 
-		# Get videos in channel one by one and download them using for loop.
+    case 3:
 
-		for i in link.videos:
-			print(f'\n[+] Downloading "{i.title}" .. ')
+        url = input('\nURL of a channel : ')
+        resolution = resolution()
+        path = location()
+        link = YouTube(url)
 
-			# Set resolution and download.
-			i.streams.filter(res = resolution, file_extension = 'mp4').first().download(path)
-			
-			print(f'\n[+]Downloaded')
+        # Get videos in channel one by one and download them using for loop.
 
-	case 4:
+        for i in link.videos:
+            print(f'\n[+] Downloading "{i.title}" .. ')
 
-		url = input('\nURL of a video : ')
-		link = YouTube(url)
-		path = location()
+            # Set resolution and download.
+            i.streams.filter(
+                res=resolution, file_extension='mp4').first().download(path)
 
-		print(f'\n[+] Downloading "{link.title}" .. ')
+            print(f'\n[+]Downloaded')
 
-		link.streams.filter(only_audio = True, file_extension = 'mp4').first().download(path)
-		
-		print(f'\n[+]Downloaded')
+    case 4:
 
-	case default:
+        url = input('\nURL of a video : ')
+        link = YouTube(url)
+        path = location()
 
-		print('Error occured. Try again!')
+        print(f'\n[+] Downloading "{link.title}" .. ')
+
+        link.streams.filter(
+            only_audio=True, file_extension='mp4').first().download(path)
+
+        print(f'\n[+]Downloaded')
+
+    case default:
+
+        print('Error occured. Try again!')
