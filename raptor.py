@@ -2,6 +2,8 @@
 from pytube import YouTube, Playlist, Channel
 import platform
 import os
+import math
+from pytube.request import filesize
 from termcolor import colored
 
 system = platform.platform()
@@ -19,22 +21,44 @@ elif('Windows' in system):
 home_dir = os.path.expanduser('~')
 
 
+def all_filesize(link):
+    resolution = ['144p', '240p', '360p', '480p', '720p', '1080p']
+
+    print('\n[+]File sizes')
+
+    for i in resolution:
+        size = math.ceil(link.streams.filter(res=i).first().filesize/1024/1024)
+        print(f'{i} : {size}MB')
+
+
+def filesize(link, resolution):
+    size = math.ceil(link.streams.filter(
+        res=resolution).first().filesize/1024/1024)
+
+    return size
+
+
 def resolution():
-    res = input(colored('Resolution of the video (360p,720p..) : ',
-                'red', attrs=['bold']))
+    res = input(colored('\nResolution of the video (360p,720p..) : ',
+                'red'))
     return res
+
 
 # Path to download file.
 
-
 def location():
-    path = f'{home_dir}\\Downloads'
-    return path
+    if('Linux' in system):
+        path = f'{home_dir}/Downloads'
+        return path
+
+    elif('Windows' in system):
+        path = f'{home_dir}\\Downloads'
+        return path
 
 
 print(colored('''
 
-	██████╗  █████╗ ██████╗ ████████╗ ██████╗ ██████╗ 
+	██████╗  █████╗ ██████╗ ████████╗ ██████╗ ██████╗
 	██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝██╔═══██╗██╔══██╗
 	██████╔╝███████║██████╔╝   ██║   ██║   ██║██████╔╝
 	██╔══██╗██╔══██║██╔═══╝    ██║   ██║   ██║██╔══██╗
@@ -42,94 +66,107 @@ print(colored('''
 	╚═╝  ╚═╝╚═╝  ╚═╝╚═╝        ╚═╝    ╚═════╝ ╚═╝  ╚═╝
 
 	created by : Vinura Yashohara (AnonyMSAV)
-	''', 'blue', attrs=['bold']))
+    Version : 2
+	''', 'blue'))
 
 # Options of the program.
 print(colored('''
-	Options : 
+	Options :
 		1. To download individual video.
 		2. To download playlist.
 		3. To download all videos in channel.
 		4. To download audio from video.
-		''', 'yellow', attrs=['bold']))
+		''', 'yellow'))
 
-options = int(input(colored('Enter : ', 'red', attrs=['bold'])))
+options = int(input(colored('Enter : ', 'red')))
 
 
 match options:
 
     case 1:
 
-        url = input(colored('\nURL of the video : ', 'red', attrs=['bold']))
-        resolution = resolution()
+        url = input(colored('\nURL of the video : ', 'red'))
         link = YouTube(url)
+        option = input(
+            colored('\nDo you need all the file sizes [1,0] : ', 'red'))
+
+        if(option == 1):
+            all_filesize(link, option)
+
+        resolution = resolution()
+        size = filesize(link, resolution)
+
         path = location()
 
-        print(
-            colored(f'\n[+]Downloading "{link.title}" .. ', 'yellow', attrs=['bold']))
+        print(colored(f'''\n[+]File size : {size} MB
+\n[+]Downloading "{link.title}" ..''', 'yellow'))
 
         # Set resolution and download.
         link.streams.filter(
             res=resolution, file_extension='mp4').first().download(path)
 
         print(colored(
-            f'\n[+]Downloaded and stored in the Downloads folder', 'yellow', attrs=['bold']))
+            f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
 
     case 2:
 
-        url = input(colored('\nURL of a playlist : ', 'red', attrs=['bold']))
+        url = input(colored('\nURL of a playlist : ', 'red'))
         resolution = resolution()
         link = Playlist(url)
         path = location()
+        size = filesize(link, resolution)
 
         # Get videos in playlist one by one and download them using for loop.
 
         for i in link.videos:
 
-            print(
-                colored(f'\n[+]Downloading "{i.title}" .. ', 'yellow', attrs=['bold']))
+            print(colored(f'''\n[+]File size : {size} MB
+\n[+]Downloading "{i.title}" ..''', 'yellow'))
 
             # Set resolution and download.
             i.streams.filter(
                 res=resolution, file_extension='mp4').first().download(path)
             print(colored(
-                f'\n[+]Downloaded and stored in the Downloads folder', 'yellow', attrs=['bold']))
+                f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
 
     case 3:
 
-        url = input(colored('\nURL of a channel : ', 'red', attrs=['bold']))
+        url = input(colored('\nURL of a channel : ', 'red'))
         resolution = resolution()
         path = location()
         link = Channel(url)
+        size = filesize(link, resolution)
 
         # Get videos in channel one by one and download them using for loop.
 
         for i in link.videos:
-            print(
-                colored(f'\n[+]Downloading "{i.title}" .. ', 'yellow', attrs=['bold']))
+            print(colored(f'''\n[+]File size : {size} MB
+\n[+]Downloading "{i.title}" ..''', 'yellow'))
 
             # Set resolution and download.
             i.streams.filter(
                 res=resolution, file_extension='mp4').first().download(path)
 
             print(colored(
-                f'\n[+]Downloaded and stored in the Downloads folder', 'yellow', attrs=['bold']))
+                f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
 
     case 4:
 
-        url = input(colored('\nURL of a video : ', 'red', attrs=['bold']))
+        url = input(colored('\nURL of a video : ', 'red'))
         link = YouTube(url)
         path = location()
+        size = math.ceil(link.streams.filter(
+            only_audio=True, file_extension='mp4').first().filesize/1024/1024)
 
-        print(
-            colored(f'\n[+]Downloading "{link.title}" .. ', 'yellow', attrs=['bold']))
+        print(colored(f'''\n[+]File size : {size} MB
+\n[+]Downloading "{link.title}" ..''', 'yellow'))
 
         link.streams.filter(
             only_audio=True, file_extension='mp4').first().download(path)
 
         print(colored(
-            f'\n[+]Downloaded and stored in the Downloads folder', 'yellow', attrs=['bold']))
+            f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
 
     case default:
 
-        print(colored('Error occured. Try again!', 'red', attrs=['bold']))
+        print(colored('Error occured. Try again!', 'red'))
