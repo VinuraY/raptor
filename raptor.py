@@ -168,4 +168,4 @@ match options:
 
     case default:
 
-        print(colored('Error occured. Try again!', 'red'))
+        print(colored('\nError occured. Try again!', 'red', attrs=['blink']))
