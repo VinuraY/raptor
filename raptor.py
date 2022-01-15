@@ -26,9 +26,14 @@ def all_filesize(link):
 
     print('\n[+]File sizes')
 
-    for i in resolution:
-        size = math.ceil(link.streams.filter(res=i).first().filesize/1024/1024)
-        print(f'{i} : {size}MB')
+    try:
+        for i in resolution:
+            size = math.ceil(link.streams.filter(
+                res=i).first().filesize/1024/1024)
+            print(f'{i} : {size}MB')
+
+    except AttributeError:
+        pass
 
 
 def filesize(link, resolution):
