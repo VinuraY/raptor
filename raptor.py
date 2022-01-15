@@ -86,11 +86,11 @@ match options:
 
         url = input(colored('\nURL of the video : ', 'red'))
         link = YouTube(url)
-        option = input(
-            colored('\nDo you need all the file sizes [1,0] : ', 'red'))
+        option = int(input(
+            colored('\nDo you need all the file sizes [1,0] : ', 'red')))
 
         if(option == 1):
-            all_filesize(link, option)
+            all_filesize(link)
 
         resolution = resolution()
         size = filesize(link, resolution)
