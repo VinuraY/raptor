@@ -22,7 +22,8 @@ home_dir = os.path.expanduser('~')
 
 
 def all_filesize(link):
-    resolution = ['144p', '240p', '360p', '480p', '720p', '1080p']
+    resolution = ['144p', '240p', '360p', '480p',
+                  '720p', '1080p', '1440p', '2160p']
 
     print('\n[+]File sizes')
 
@@ -91,68 +92,99 @@ match options:
 
         url = input(colored('\nURL of the video : ', 'red'))
         link = YouTube(url)
+        path = location()
         option = int(input(
             colored('\nDo you need all the file sizes [1,0] : ', 'red')))
 
         if(option == 1):
             all_filesize(link)
 
-        resolution = resolution()
-        size = filesize(link, resolution)
+        try:
+            resolution = resolution()
+            size = filesize(link, resolution)
+            print(colored(
+                f'''\n[+]File size : {size} MB
+                \n[+]Downloading "{link.title}" ..''', 'yellow'))
 
-        path = location()
+            # Set resolution and download.
+            link.streams.filter(
+                res=resolution, file_extension='mp4').first().download(path)
 
-        print(colored(f'''\n[+]File size : {size} MB
-\n[+]Downloading "{link.title}" ..''', 'yellow'))
+            print(
+                colored(f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
 
-        # Set resolution and download.
-        link.streams.filter(
-            res=resolution, file_extension='mp4').first().download(path)
-
-        print(colored(
-            f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
+        except AttributeError:
+            print(colored('\nResolution is not supported, please check again!', 'red'))
 
     case 2:
 
         url = input(colored('\nURL of a playlist : ', 'red'))
-        resolution = resolution()
         link = Playlist(url)
         path = location()
-        size = filesize(link, resolution)
 
-        # Get videos in playlist one by one and download them using for loop.
+        try:
+            resolution = resolution()
+            size = filesize(link, resolution)
+            # Get videos in playlist one by one and download them using for loop.
 
-        for i in link.videos:
+            for i in link.videos:
+                print(colored(f'''\n[+]File size : {size} MB
+                \n[+]Downloading "{i.title}" ..''', 'yellow'))
 
-            print(colored(f'''\n[+]File size : {size} MB
-\n[+]Downloading "{i.title}" ..''', 'yellow'))
+                # Set resolution and download.
+                i.streams.filter(
+                    res=resolution, file_extension='mp4').first().download(path)
+                print(
+                    colored(f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
 
-            # Set resolution and download.
-            i.streams.filter(
-                res=resolution, file_extension='mp4').first().download(path)
+        except AttributeError:
             print(colored(
-                f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
+                '\nResolution is not supported, so we download maximum resolution video for you', 'red'))
+
+            for i in link.videos:
+                print(
+                    colored(f'''\n[+]Downloading "{i.title}" ..''', 'yellow'))
+
+                # Set resolution and download.
+                i.streams.filter(
+                    file_extension='mp4').get_highest_resolution().download(path)
+                print(
+                    colored(f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
 
     case 3:
 
         url = input(colored('\nURL of a channel : ', 'red'))
-        resolution = resolution()
         path = location()
         link = Channel(url)
-        size = filesize(link, resolution)
 
-        # Get videos in channel one by one and download them using for loop.
+        try:
+            resolution = resolution()
+            size = filesize(link, resolution)
+            # Get videos in channel one by one and download them using for loop.
 
-        for i in link.videos:
-            print(colored(f'''\n[+]File size : {size} MB
-\n[+]Downloading "{i.title}" ..''', 'yellow'))
+            for i in link.videos:
+                print(colored(f'''\n[+]File size : {size} MB
+                \n[+]Downloading "{i.title}" ..''', 'yellow'))
 
-            # Set resolution and download.
-            i.streams.filter(
-                res=resolution, file_extension='mp4').first().download(path)
+                # Set resolution and download.
+                i.streams.filter(
+                    res=resolution, file_extension='mp4').first().download(path)
+                print(
+                    colored(f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
 
+        except AttributeError:
             print(colored(
-                f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
+                '\nResolution is not supported, so we download maximum resolution video for you', 'red'))
+
+            for i in link.videos:
+                print(
+                    colored(f'''\n[+]Downloading "{i.title}" ..''', 'yellow'))
+
+                # Set resolution and download.
+                i.streams.filter(
+                    file_extension='mp4').get_highest_resolution().download(path)
+                print(
+                    colored(f'\n[+]Downloaded and stored in the {path} folder', 'yellow'))
 
     case 4:
 
